@@ -25,7 +25,8 @@ public class JP2Parser {
         parseStrategy.parse(reader);
     }
 
-    private static void readJPEG2000SignatureBox(final JP2Reader reader) {
-        
+    private static void readJPEG2000SignatureBox(final JP2Reader reader) throws JP2ParsingException {
+        // TODO: make this verify validity
+        reader.skipBytes(12);
     }
 }

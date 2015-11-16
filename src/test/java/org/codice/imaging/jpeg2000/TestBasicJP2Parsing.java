@@ -66,5 +66,9 @@ public class TestBasicJP2Parsing {
         JP2ParseStrategy parseStrategy = new JP2ParseStrategy();
         JP2Reader reader = new JP2FileReader(testfile);
         JP2Parser.parse(reader, parseStrategy);
+        assertEquals("jp2 ", parseStrategy.getBranding());
+        assertEquals(0, parseStrategy.getMinorVersion());
+        assertEquals(1, parseStrategy.getCompatibilityList().size());
+        assertTrue(parseStrategy.getCompatibilityList().contains(new String("jp2 ")));
     }
 }

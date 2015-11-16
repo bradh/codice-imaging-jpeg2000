@@ -25,7 +25,9 @@ package org.codice.imaging.jpeg2000;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,4 +83,47 @@ public class JP2FileReader implements JP2Reader {
         return new RandomAccessFile(filename, mode);
     }
 
+    @Override
+    public void skipBytes(final int numOfBytesToSkip) throws JP2ParsingException {
+        try {
+            mFile.skipBytes(numOfBytesToSkip);
+        } catch (IOException ex) {
+            LOG.warn("Could not skip " + numOfBytesToSkip + " bytes", ex);
+            throw new JP2ParsingException("Could not skip bytes, " +  ex.getMessage());
+        }
+    }
+
+    @Override
+    public int readUnsignedInt() throws JP2ParsingException {
+        try {
+            return mFile.readInt();
+        } catch (IOException ex) {
+            LOG.warn("Could not read integer", ex);
+            throw new JP2ParsingException("Could not read integer, " +  ex.getMessage());
+        }
+    }
+
+    @Override
+    public void verifyBoxType(int boxTypeSignature) throws JP2ParsingException {
+        int boxType = readUnsignedInt();
+        if (boxTypeSignature != boxType) {
+            LOG.warn("Box Type signature verification failure - expected " + boxTypeSignature + " but got " + boxType);
+            throw new JP2ParsingException("BoxType signature verification failure");
+        }
+    }
+
+    @Override
+    public String getFixedLengthString(int stringLength) throws JP2ParsingException {
+        try {
+            byte[] stringAsBytes = new byte[stringLength];
+            int numBytesRead = mFile.read(stringAsBytes);
+            if (numBytesRead != stringLength) {
+                throw new IOException("Unexpected number of bytes read - expected " + stringLength + ", but only got " + numBytesRead);
+            }
+            return new String(stringAsBytes, "US-ASCII");
+        } catch (IOException ex) {
+            LOG.warn("Unable to read fixed length string", ex);
+            throw new JP2ParsingException("Unable to read fixed length string, exception was:" + ex.getMessage());
+        }
+    }
 }
