@@ -37,6 +37,38 @@ import static org.junit.Assert.*;
  */
 public class TestBasicJP2Parsing {
 
+    private static final String xml1 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r" +
+        "<IMAGE_CREATION xmlns=\"http://www.jpeg.org/jpx/1.0/xml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.jpeg.org/jpx/1.0/xml\r" +
+        "http://www.jpeg.org/metadata/15444-2.xsd\">\r" +
+        "	<GENERAL_CREATION_INFO>\r" +
+        "		<CREATION_TIME>2001-11-01T13:45:00.000-06:00</CREATION_TIME>\r" +
+        "		<IMAGE_SOURCE>Professional 120 Image</IMAGE_SOURCE>\r" +
+        "	</GENERAL_CREATION_INFO>\r" +
+        "</IMAGE_CREATION>\r\r";
+
+    private static final String xml2 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r" +
+        "<CONTENT_DESCRIPTION xmlns=\"http://www.jpeg.org/jpx/1.0/xml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.jpeg.org/jpx/1.0/xml\r" +
+        " http://www.jpeg.org/metadata/15444-2.xsd\">\r" +
+        "	<CAPTION>Houchin Castle</CAPTION>\r" +
+        "	<LOCATION>\r" +
+        "		<ADDRESS TYPE=\"Scene Address Location\">\r" +
+        "			<ADDR_COMP TYPE=\"Street\">269 Castle Street</ADDR_COMP>\r" +
+        "			<ADDR_COMP TYPE=\"City\">Greece</ADDR_COMP>\r" +
+        "			<ADDR_COMP TYPE=\"State\">New York</ADDR_COMP>\r" +
+        "			<ZIPCODE>14059</ZIPCODE>\r" +
+        "			<COUNTRY>US</COUNTRY>\r" +
+        "		</ADDRESS>\r" +
+        "	</LOCATION>\r" +
+        "	<EVENT>\r" +
+        "		<EVENT_TYPE>Moving Day</EVENT_TYPE>\r" +
+        "		<DESCRIPTION>Scott's new Castle</DESCRIPTION>\r" +
+        "		<COMMENT>Color scientists rule</COMMENT>\r" +
+        "	</EVENT>\r" +
+        "</CONTENT_DESCRIPTION>\r" +
+        "\r";
+
     public TestBasicJP2Parsing() {
     }
 
@@ -70,5 +102,9 @@ public class TestBasicJP2Parsing {
         assertEquals(0, parseStrategy.getMinorVersion());
         assertEquals(1, parseStrategy.getCompatibilityList().size());
         assertTrue(parseStrategy.getCompatibilityList().contains(new String("jp2 ")));
+
+        assertEquals(2, parseStrategy.getXmlList().size());
+        assertEquals(xml1, parseStrategy.getXmlList().get(0));
+        assertEquals(xml2, parseStrategy.getXmlList().get(1));
     }
 }

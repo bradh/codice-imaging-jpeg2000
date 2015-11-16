@@ -14,11 +14,12 @@ import java.util.List;
  */
 public class JP2ParseStrategy {
 
-    JP2Reader mReader = null;
+    private JP2Reader mReader = null;
 
-    String mBrand = null;
-    int mMinorVersion = 0;
-    ArrayList<String> mCompatibilityList = new ArrayList<>();
+    private String mBrand = null;
+    private int mMinorVersion = 0;
+    private final ArrayList<String> mCompatibilityList = new ArrayList<>();
+    private final ArrayList<String> mXmlList = new ArrayList<>();
 
     private static final int BOX_SIGNATURE_FILETYPE = 0x66747970;
     private static final int BOX_SIGNATURE_LENGTH = 4;
@@ -29,7 +30,40 @@ public class JP2ParseStrategy {
     public void parse(final JP2Reader reader) throws JP2ParsingException {
         mReader = reader;
         parseFileTypeBox();
-        // TODO: parse remaining boxes
+        while (mReader.hasDataRemaining()) {
+            int boxLength = mReader.readUnsignedInt();
+            // TODO: there is a "0" and "1" case we aren't handling. See Table I-1 and Section I.4
+            String boxType = mReader.getFixedLengthString(BOX_SIGNATURE_LENGTH);
+            int remainingBytesInBox = boxLength - (UNSIGNED_INT_LENGTH + BOX_SIGNATURE_LENGTH);
+            switch (boxType) {
+                case "xml ":
+                    parseXMLBox(remainingBytesInBox);
+                    break;
+                case "jp2h":
+                    parseJP2HeaderBox(remainingBytesInBox);
+                    break;
+                case "jp2c":
+                    parseContiguousCodestreamBox(remainingBytesInBox);
+                    break;
+                default:
+                    mReader.skipBytes(remainingBytesInBox);
+                    break;
+            }
+            
+        }
+    }
+
+    private void parseContiguousCodestreamBox(int codestreamLength) throws JP2ParsingException {
+        mReader.skipBytes(codestreamLength);
+    }
+
+    private void parseJP2HeaderBox(int superBoxLength) throws JP2ParsingException {
+        mReader.skipBytes(superBoxLength);
+    }
+
+    private void parseXMLBox(int xmlLength) throws JP2ParsingException {
+        String xml = mReader.getFixedLengthString(xmlLength);
+        mXmlList.add(xml);
     }
 
     private void parseFileTypeBox() throws JP2ParsingException {
@@ -62,5 +96,9 @@ public class JP2ParseStrategy {
 
     public List<String> getCompatibilityList() {
         return mCompatibilityList;
+    }
+
+    public List<String> getXmlList() {
+        return mXmlList;
     }
 }

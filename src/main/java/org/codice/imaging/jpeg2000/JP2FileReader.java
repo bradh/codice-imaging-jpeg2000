@@ -126,4 +126,14 @@ public class JP2FileReader implements JP2Reader {
             throw new JP2ParsingException("Unable to read fixed length string, exception was:" + ex.getMessage());
         }
     }
+
+    @Override
+    public boolean hasDataRemaining() throws JP2ParsingException {
+        try {
+            return mFile.getFilePointer() < mFile.length();
+        } catch (IOException ex) {
+            LOG.warn("Unable to check if data remaining", ex);
+            throw new JP2ParsingException("Unable to check if data remaining, exception was:" + ex.getMessage());
+        }
+    }
 }
