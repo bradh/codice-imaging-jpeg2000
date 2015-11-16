@@ -94,6 +94,26 @@ public class JP2FileReader implements JP2Reader {
     }
 
     @Override
+    public byte readUnsignedByte() throws JP2ParsingException {
+        try {
+            return mFile.readByte();
+        } catch (IOException ex) {
+            LOG.warn("Could not read byte", ex);
+            throw new JP2ParsingException("Could not read byte, " +  ex.getMessage());
+        }
+    }
+
+    @Override
+    public short readUnsignedShort() throws JP2ParsingException {
+        try {
+            return mFile.readShort();
+        } catch (IOException ex) {
+            LOG.warn("Could not read short", ex);
+            throw new JP2ParsingException("Could not read short, " +  ex.getMessage());
+        }
+    }
+
+    @Override
     public int readUnsignedInt() throws JP2ParsingException {
         try {
             return mFile.readInt();
@@ -136,4 +156,6 @@ public class JP2FileReader implements JP2Reader {
             throw new JP2ParsingException("Unable to check if data remaining, exception was:" + ex.getMessage());
         }
     }
+
+
 }

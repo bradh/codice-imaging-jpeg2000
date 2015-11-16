@@ -13,6 +13,10 @@ public interface JP2Reader {
 
     public void skipBytes(final int numOfBytesToSkip) throws JP2ParsingException;
 
+    public byte readUnsignedByte() throws JP2ParsingException;
+    
+    public short readUnsignedShort() throws JP2ParsingException;
+    
     public int readUnsignedInt() throws JP2ParsingException;
 
     public void verifyBoxType(final int boxTypeSignature) throws JP2ParsingException;

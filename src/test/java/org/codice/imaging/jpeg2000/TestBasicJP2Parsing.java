@@ -106,5 +106,12 @@ public class TestBasicJP2Parsing {
         assertEquals(2, parseStrategy.getXmlList().size());
         assertEquals(xml1, parseStrategy.getXmlList().get(0));
         assertEquals(xml2, parseStrategy.getXmlList().get(1));
+
+        assertEquals(768, parseStrategy.getImageWidth());
+        assertEquals(512, parseStrategy.getImageHeight());
+        assertEquals(3, parseStrategy.getNumberOfComponents());
+        assertEquals(7, parseStrategy.getBitsPerComponent());
+        assertFalse(parseStrategy.hasUnknownColourspace());
+        assertFalse(parseStrategy.hasIntellectualPropertyRights());
     }
 }
