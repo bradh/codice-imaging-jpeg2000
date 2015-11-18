@@ -21,6 +21,8 @@ public interface JP2Reader {
 
     public void verifyBoxType(final int boxTypeSignature) throws JP2ParsingException;
 
+    public byte[] getBytes(int byteArrayLength) throws JP2ParsingException;
+
     public String getFixedLengthString(final int stringLength) throws JP2ParsingException;
 
     public boolean hasDataRemaining() throws JP2ParsingException;

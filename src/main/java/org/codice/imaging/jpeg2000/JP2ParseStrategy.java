@@ -25,12 +25,16 @@ public class JP2ParseStrategy {
     private short mNumberOfComponents = 0;
     private int mColourspaceUnknown  = 0;
     private int mIntellectualPropertyRights = 0;
+    private int mColourSpace = 0;
 
     private int mBitsPerComponent = 0;
+    
+    private byte[] mCodeStream = null;
 
     private static final int BOX_SIGNATURE_FILETYPE = 0x66747970;
     private static final int BOX_SIGNATURE_LENGTH = 4;
     private static final int BRAND_STRING_LENGTH = 4;
+    private static final int UNSIGNED_BYTE_LENGTH = 1;
     private static final int UNSIGNED_INT_LENGTH = 4;
     private static final int COMPATIBILITY_LIST_ENTRY_LENGTH = 4;
     private static final int EXPECTED_LENGTH_IMAGE_HEADER = 14; // Excludes LBox and TBox
@@ -63,7 +67,7 @@ public class JP2ParseStrategy {
     }
 
     private void parseContiguousCodestreamBox(int codestreamLength) throws JP2ParsingException {
-        mReader.skipBytes(codestreamLength);
+        mCodeStream = mReader.getBytes(codestreamLength);
     }
 
     private void parseJP2HeaderSuperBox(int superBoxLength) throws JP2ParsingException {
@@ -81,6 +85,9 @@ public class JP2ParseStrategy {
                     break;
                 case "colr":
                     parseColourSpecificationBox(remainingBytesInBox);
+                    break;
+                case "cdef":
+                    parseChannelDefinitionBox(remainingBytesInBox);
                     break;
                 default:
                     mReader.skipBytes(remainingBytesInBox);
@@ -107,7 +114,26 @@ public class JP2ParseStrategy {
     }
 
     private void parseColourSpecificationBox(final int remainingBytesInBox) throws JP2ParsingException {
-        mReader.skipBytes(remainingBytesInBox);
+        int method = mReader.readUnsignedByte();
+        mReader.skipBytes(1); // PREC, always ignored
+        mReader.skipBytes(1); // APPROX, always ignored
+        if (method == 1) {
+            mColourSpace = mReader.readUnsignedInt();
+        } else if (method == 2) {
+            parseRestrictedICCProfileColourSpecificationBox(remainingBytesInBox - (3 * UNSIGNED_BYTE_LENGTH));
+        } else {
+            mReader.skipBytes(remainingBytesInBox - (3 * UNSIGNED_BYTE_LENGTH));
+        }
+    }
+
+    private void parseChannelDefinitionBox(final int remainingBytesInBox) throws JP2ParsingException {
+        int numberOfChannelDescriptors = mReader.readUnsignedShort();
+        // TODO: build some kind of smart data structure to handle the I.5.3.6 box description
+        mReader.skipBytes(remainingBytesInBox - 2);
+    }
+
+    private void parseRestrictedICCProfileColourSpecificationBox(final int bytesRemainingInBox) throws JP2ParsingException {
+        mReader.skipBytes(bytesRemainingInBox);
     }
 
     private void parseXMLBox(int xmlLength) throws JP2ParsingException {
@@ -173,5 +199,13 @@ public class JP2ParseStrategy {
 
     public boolean hasIntellectualPropertyRights() {
         return (mIntellectualPropertyRights == 1);
+    }
+
+    public int getColourSpace() {
+        return mColourSpace;
+    }
+
+    public byte[] getCodeStream() {
+        return mCodeStream;
     }
 }

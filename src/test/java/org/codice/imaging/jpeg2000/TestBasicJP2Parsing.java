@@ -101,7 +101,7 @@ public class TestBasicJP2Parsing {
         assertEquals("jp2 ", parseStrategy.getBranding());
         assertEquals(0, parseStrategy.getMinorVersion());
         assertEquals(1, parseStrategy.getCompatibilityList().size());
-        assertTrue(parseStrategy.getCompatibilityList().contains(new String("jp2 ")));
+        assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
 
         assertEquals(2, parseStrategy.getXmlList().size());
         assertEquals(xml1, parseStrategy.getXmlList().get(0));
@@ -113,5 +113,26 @@ public class TestBasicJP2Parsing {
         assertEquals(7, parseStrategy.getBitsPerComponent());
         assertFalse(parseStrategy.hasUnknownColourspace());
         assertFalse(parseStrategy.hasIntellectualPropertyRights());
+
+        // TODO: make the sRGB and greyscale enum values shared somewhere
+        assertEquals(16, parseStrategy.getColourSpace());
+
+        assertEquals(649401, parseStrategy.getCodeStream().length);
+    }
+
+    @Test
+    public void testFile2() throws JP2ParsingException {
+        final String testfilename = "/file2.jp2";
+        File testfile = new File(getClass().getResource(testfilename).getFile());
+
+        assertNotNull("Test file missing", testfile);
+
+        JP2ParseStrategy parseStrategy = new JP2ParseStrategy();
+        JP2Reader reader = new JP2FileReader(testfile);
+        JP2Parser.parse(reader, parseStrategy);
+        assertEquals("jp2 ", parseStrategy.getBranding());
+        assertEquals(0, parseStrategy.getMinorVersion());
+        assertEquals(1, parseStrategy.getCompatibilityList().size());
+        assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
     }
 }

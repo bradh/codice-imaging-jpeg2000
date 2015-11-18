@@ -148,6 +148,21 @@ public class JP2FileReader implements JP2Reader {
     }
 
     @Override
+    public byte[] getBytes(int byteArrayLength) throws JP2ParsingException {
+        try {
+            byte[] bytes = new byte[byteArrayLength];
+            int numBytesRead = mFile.read(bytes);
+            if (numBytesRead != byteArrayLength) {
+                throw new IOException("Unexpected number of bytes read - expected " + byteArrayLength + ", but only got " + numBytesRead);
+            }
+            return bytes;
+        } catch (IOException ex) {
+            LOG.warn("Unable to read fixed length byte array", ex);
+            throw new JP2ParsingException("Unable to read fixed length byte array, exception was:" + ex.getMessage());
+        }
+    }
+
+    @Override
     public boolean hasDataRemaining() throws JP2ParsingException {
         try {
             return mFile.getFilePointer() < mFile.length();
