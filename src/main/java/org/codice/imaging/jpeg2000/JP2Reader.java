@@ -15,10 +15,11 @@ public interface JP2Reader {
 
     public byte readUnsignedByte() throws JP2ParsingException;
     
-    public short readUnsignedShort() throws JP2ParsingException;
+    public int readUnsignedShort() throws JP2ParsingException;
     
     public int readUnsignedInt() throws JP2ParsingException;
 
+    // TODO: this probably isn't earning its weight...
     public void verifyBoxType(final int boxTypeSignature) throws JP2ParsingException;
 
     public byte[] getBytes(int byteArrayLength) throws JP2ParsingException;

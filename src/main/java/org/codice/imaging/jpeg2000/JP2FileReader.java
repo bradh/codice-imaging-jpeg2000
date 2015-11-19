@@ -104,9 +104,9 @@ public class JP2FileReader implements JP2Reader {
     }
 
     @Override
-    public short readUnsignedShort() throws JP2ParsingException {
+    public int readUnsignedShort() throws JP2ParsingException {
         try {
-            return mFile.readShort();
+            return (mFile.readShort() & 0x0000FFFF);
         } catch (IOException ex) {
             LOG.warn("Could not read short", ex);
             throw new JP2ParsingException("Could not read short, " +  ex.getMessage());

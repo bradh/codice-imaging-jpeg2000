@@ -22,14 +22,14 @@ public class JP2ParseStrategy {
     private final ArrayList<String> mXmlList = new ArrayList<>();
     private int mImageHeight = 0;
     private int mImageWidth = 0;
-    private short mNumberOfComponents = 0;
+    private int mNumberOfComponents = 0;
     private int mColourspaceUnknown  = 0;
     private int mIntellectualPropertyRights = 0;
     private int mColourSpace = 0;
 
     private int mBitsPerComponent = 0;
     
-    private byte[] mCodeStream = null;
+    private JP2CodeStream mCodeStream = null;
 
     private static final int BOX_SIGNATURE_FILETYPE = 0x66747970;
     private static final int BOX_SIGNATURE_LENGTH = 4;
@@ -67,7 +67,7 @@ public class JP2ParseStrategy {
     }
 
     private void parseContiguousCodestreamBox(int codestreamLength) throws JP2ParsingException {
-        mCodeStream = mReader.getBytes(codestreamLength);
+        mCodeStream = new JP2CodeStream(mReader, codestreamLength);
     }
 
     private void parseJP2HeaderSuperBox(int superBoxLength) throws JP2ParsingException {
@@ -185,7 +185,7 @@ public class JP2ParseStrategy {
         return mImageHeight;
     }
 
-    public short getNumberOfComponents() {
+    public int getNumberOfComponents() {
         return mNumberOfComponents;
     }
 
@@ -205,7 +205,7 @@ public class JP2ParseStrategy {
         return mColourSpace;
     }
 
-    public byte[] getCodeStream() {
+    public JP2CodeStream getCodeStream() {
         return mCodeStream;
     }
 }
