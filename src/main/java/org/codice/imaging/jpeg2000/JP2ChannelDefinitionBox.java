@@ -24,27 +24,35 @@
 package org.codice.imaging.jpeg2000;
 
 /**
- *
- * @author bradh
+ * A JPEG2000 Channel Definition Box, as defined in JPEG core specification
+ * Annex I Section 5.3.6
  */
-public class JP2Parser {
+public class JP2ChannelDefinitionBox {
+
+    private JP2Reader mReader = null;
+    private int mBoxLength = 0;
 
     /**
-     * Parse a JP2 file from a specific reader and parsing strategy.
+     * Construct ChannelDefinitionBox from specified reader.
      *
-     * The concept is that the parsing strategy will store the parse results.
+     * This will read a specified number of bytes (the boxLength) from the
+     * reader, or will throw a parsing exception.
      *
-     * @param reader the reader to use
-     * @param parseStrategy the parsing strategy
-     * @throws JP2ParsingException if an error occurs during parsing
+     * @param reader the reader to read from
+     * @param boxLength the number of bytes in the box
+     *
+     * @throws JP2ParsingException
      */
-    public static void parse(final JP2Reader reader, final JP2ParseStrategy parseStrategy) throws JP2ParsingException {
-        readJPEG2000SignatureBox(reader);
-        parseStrategy.parse(reader);
+    public JP2ChannelDefinitionBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
+        mReader = reader;
+        mBoxLength = boxLength;
+        parseBox();
     }
 
-    private static void readJPEG2000SignatureBox(final JP2Reader reader) throws JP2ParsingException {
-        // TODO: make this verify validity
-        reader.skipBytes(12);
+    private void parseBox() throws JP2ParsingException {
+        int numberOfChannelDescriptors = mReader.readUnsignedShort();
+        // TODO: complete box parsing
+        mReader.skipBytes(mBoxLength - 2);
     }
+
 }

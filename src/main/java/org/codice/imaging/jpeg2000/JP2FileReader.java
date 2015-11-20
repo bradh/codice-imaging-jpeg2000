@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 bradh.
+ * Copyright 2015 Codice
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,15 +119,6 @@ public class JP2FileReader implements JP2Reader {
         } catch (IOException ex) {
             LOG.warn("Could not read integer", ex);
             throw new JP2ParsingException("Could not read integer, " +  ex.getMessage());
-        }
-    }
-
-    @Override
-    public void verifyBoxType(int boxTypeSignature) throws JP2ParsingException {
-        int boxType = readUnsignedInt();
-        if (boxTypeSignature != boxType) {
-            LOG.warn("Box Type signature verification failure - expected " + boxTypeSignature + " but got " + boxType);
-            throw new JP2ParsingException("BoxType signature verification failure");
         }
     }
 
