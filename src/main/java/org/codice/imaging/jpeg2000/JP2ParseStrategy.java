@@ -53,8 +53,6 @@ public class JP2ParseStrategy {
     private static final int BOX_SIGNATURE_FILETYPE = 0x66747970;
     private static final int BOX_SIGNATURE_LENGTH = 4;
     private static final int BRAND_STRING_LENGTH = 4;
-    private static final int UNSIGNED_BYTE_LENGTH = 1;
-    private static final int UNSIGNED_INT_LENGTH = 4;
     private static final int COMPATIBILITY_LIST_ENTRY_LENGTH = 4;
     private static final int EXPECTED_LENGTH_IMAGE_HEADER = 14; // Excludes LBox and TBox
     private static final int EXPECTED_COMPRESSION_TYPE_VALUE = 7;
@@ -66,7 +64,7 @@ public class JP2ParseStrategy {
             int boxLength = mReader.readUnsignedInt();
             // TODO: there is a "0" and "1" case we aren't handling. See Table I-1 and Section I.4
             String boxType = mReader.getFixedLengthString(BOX_SIGNATURE_LENGTH);
-            int remainingBytesInBox = boxLength - (UNSIGNED_INT_LENGTH + BOX_SIGNATURE_LENGTH);
+            int remainingBytesInBox = boxLength - (PackageConstants.UNSIGNED_INT_LENGTH + BOX_SIGNATURE_LENGTH);
             switch (boxType) {
                 case "xml ":
                     parseXMLBox(remainingBytesInBox);
@@ -94,10 +92,10 @@ public class JP2ParseStrategy {
         // TODO: consider making ihdr appear here
         while (bytesRead < superBoxLength) {
             int boxLength = mReader.readUnsignedInt();
-            bytesRead += UNSIGNED_INT_LENGTH;
+            bytesRead += PackageConstants.UNSIGNED_INT_LENGTH;
             String boxType = mReader.getFixedLengthString(BOX_SIGNATURE_LENGTH);
             bytesRead += BOX_SIGNATURE_LENGTH;
-            int remainingBytesInBox = boxLength - (UNSIGNED_INT_LENGTH + BOX_SIGNATURE_LENGTH);
+            int remainingBytesInBox = boxLength - (PackageConstants.UNSIGNED_INT_LENGTH + BOX_SIGNATURE_LENGTH);
             switch (boxType) {
                 case "ihdr":
                     parseImageHeaderBox(remainingBytesInBox);
@@ -139,9 +137,9 @@ public class JP2ParseStrategy {
         if (method == 1) {
             mColourSpace = mReader.readUnsignedInt();
         } else if (method == 2) {
-            parseRestrictedICCProfileColourSpecificationBox(remainingBytesInBox - (3 * UNSIGNED_BYTE_LENGTH));
+            parseRestrictedICCProfileColourSpecificationBox(remainingBytesInBox - (3 * PackageConstants.UNSIGNED_BYTE_LENGTH));
         } else {
-            mReader.skipBytes(remainingBytesInBox - (3 * UNSIGNED_BYTE_LENGTH));
+            mReader.skipBytes(remainingBytesInBox - (3 * PackageConstants.UNSIGNED_BYTE_LENGTH));
         }
     }
 
@@ -166,12 +164,12 @@ public class JP2ParseStrategy {
         }
         mBrand = mReader.getFixedLengthString(BRAND_STRING_LENGTH);
         mMinorVersion = mReader.readUnsignedInt();
-        int bytesRemainingInBox = boxLength - (BOX_SIGNATURE_LENGTH + BRAND_STRING_LENGTH + 2 * UNSIGNED_INT_LENGTH);
-        if (bytesRemainingInBox < (UNSIGNED_INT_LENGTH + COMPATIBILITY_LIST_ENTRY_LENGTH)) {
+        int bytesRemainingInBox = boxLength - (BOX_SIGNATURE_LENGTH + BRAND_STRING_LENGTH + 2 * PackageConstants.UNSIGNED_INT_LENGTH);
+        if (bytesRemainingInBox < (PackageConstants.UNSIGNED_INT_LENGTH + COMPATIBILITY_LIST_ENTRY_LENGTH)) {
             throw new JP2ParsingException("File Type box did not have required compatibility list entries");
         }
         int compatibilityListEntriesCount = mReader.readUnsignedInt();
-        bytesRemainingInBox -= UNSIGNED_INT_LENGTH;
+        bytesRemainingInBox -= PackageConstants.UNSIGNED_INT_LENGTH;
         if (compatibilityListEntriesCount * COMPATIBILITY_LIST_ENTRY_LENGTH != bytesRemainingInBox) {
             throw new JP2ParsingException("File Type box has mismatched compatibility list counts");
         }

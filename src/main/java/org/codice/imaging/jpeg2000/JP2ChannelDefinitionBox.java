@@ -31,6 +31,7 @@ public class JP2ChannelDefinitionBox {
 
     private JP2Reader mReader = null;
     private int mBoxLength = 0;
+    private JP2ChannelDefinitionEntry[] mEntries = null;
 
     /**
      * Construct ChannelDefinitionBox from specified reader.
@@ -51,8 +52,15 @@ public class JP2ChannelDefinitionBox {
 
     private void parseBox() throws JP2ParsingException {
         int numberOfChannelDescriptors = mReader.readUnsignedShort();
-        // TODO: complete box parsing
-        mReader.skipBytes(mBoxLength - 2);
+        int remainingBytes = mBoxLength - 2; // TODO: use a contant
+        int expectedRemainingBytes = numberOfChannelDescriptors * JP2ChannelDefinitionEntry.numberOfBytesInOneEntry();
+        if (remainingBytes != expectedRemainingBytes) {
+            throw new JP2ParsingException("Unexpected box length for JP2ChannelDefinitionBox:" + remainingBytes + ", expected:" + expectedRemainingBytes);            
+        }
+        mEntries = new JP2ChannelDefinitionEntry[numberOfChannelDescriptors];
+        for (int i = 0; i < mEntries.length; ++i) {
+            mEntries[i] = new JP2ChannelDefinitionEntry(mReader);
+        }
     }
 
 }
