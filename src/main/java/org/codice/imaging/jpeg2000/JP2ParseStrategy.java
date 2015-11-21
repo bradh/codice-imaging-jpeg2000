@@ -144,6 +144,9 @@ public class JP2ParseStrategy {
     }
 
     private void parseChannelDefinitionBox(final int remainingBytesInBox) throws JP2ParsingException {
+        if (mChannelDefinitionBox != null) {
+            throw new JP2ParsingException("Duplicate Channel Definition Box entries.");
+        }
         mChannelDefinitionBox = new JP2ChannelDefinitionBox(mReader, remainingBytesInBox);
     }
 
@@ -193,6 +196,17 @@ public class JP2ParseStrategy {
 
     public List<String> getXmlList() {
         return mXmlList;
+    }
+
+    /**
+     * Get the channel definition box for the image.
+     *
+     * Channel definition box is not a required element.
+     *
+     * @return the box, or null if there is no channel definition box.
+     */
+    public JP2ChannelDefinitionBox getChannelDefinitionBox() {
+        return mChannelDefinitionBox;
     }
 
     public int getImageWidth() {

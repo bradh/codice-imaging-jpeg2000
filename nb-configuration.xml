@@ -15,5 +15,18 @@ Any value defined here will override the pom.xml file value but is only applicab
 -->
         <netbeans.checkstyle.format>true</netbeans.checkstyle.format>
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_protectedMemberInFinalClass.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_protectedMemberInFinalClass.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_multipleTopLevelClassesInFile.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_multipleTopLevelClassesInFile.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_IF.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_IF.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_markerInterface.enabled>false</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_markerInterface.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_OrganizeMembers.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_OrganizeMembers.enabled>
+        <org-netbeans-spi-editor-hints-projects.perProjectHintSettingsEnabled>true</org-netbeans-spi-editor-hints-projects.perProjectHintSettingsEnabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_WHILE_5f_LOOP.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_WHILE_5f_LOOP.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_finalMethod.enabled>false</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_finalMethod.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_publicConstructorInNonPublicClass.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_publicConstructorInNonPublicClass.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_FOR_5f_LOOP.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_FOR_5f_LOOP.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_classMayBeInterface.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_classMayBeInterface.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_DO_5f_WHILE_5f_LOOP.enabled>true</org-netbeans-spi-editor-hints-projects.text.x-java.Braces_5f_DO_5f_WHILE_5f_LOOP.enabled>
+        <org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_finalMethodInFinalClass.enabled>false</org-netbeans-spi-editor-hints-projects.text.x-java.org_2e_netbeans_2e_modules_2e_java_2e_hints_2e_ClassStructure_2e_finalMethodInFinalClass.enabled>
     </properties>
 </project-shared-configuration>

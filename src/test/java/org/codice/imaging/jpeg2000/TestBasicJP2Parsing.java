@@ -117,6 +117,8 @@ public class TestBasicJP2Parsing {
         // TODO: make the sRGB and greyscale enum values shared somewhere
         assertEquals(16, parseStrategy.getColourSpace());
 
+        assertNull(parseStrategy.getChannelDefinitionBox());
+
         assertNotNull(parseStrategy.getCodeStream());
     }
 
@@ -134,5 +136,18 @@ public class TestBasicJP2Parsing {
         assertEquals(0, parseStrategy.getMinorVersion());
         assertEquals(1, parseStrategy.getCompatibilityList().size());
         assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
+
+        assertNotNull(parseStrategy.getChannelDefinitionBox());
+        assertEquals(3, parseStrategy.getChannelDefinitionBox().getNumberOfEntries());
+        assertNotNull(parseStrategy.getChannelDefinitionBox().getEntry(0));
+        assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(0).getChannelIndex());
+        assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(0).getChannelType());
+        assertEquals(3, parseStrategy.getChannelDefinitionBox().getEntry(0).getChannelAssociation());
+        assertEquals(1, parseStrategy.getChannelDefinitionBox().getEntry(1).getChannelIndex());
+        assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(1).getChannelType());
+        assertEquals(2, parseStrategy.getChannelDefinitionBox().getEntry(1).getChannelAssociation());
+        assertEquals(2, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelIndex());
+        assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelType());
+        assertEquals(1, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelAssociation());
     }
 }

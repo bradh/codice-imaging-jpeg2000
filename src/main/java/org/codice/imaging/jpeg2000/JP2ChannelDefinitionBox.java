@@ -63,4 +63,11 @@ public class JP2ChannelDefinitionBox {
         }
     }
 
+    public int getNumberOfEntries() {
+        return mEntries.length;
+    }
+
+    public JP2ChannelDefinitionEntry getEntry(final int entryIndex) {
+        return mEntries[entryIndex];
+    }
 }
