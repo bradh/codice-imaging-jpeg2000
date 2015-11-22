@@ -160,6 +160,6 @@ public class TestBasicJP2Parsing {
         assertEquals(0, cs.getHorizontalOffsetOfReferenceTile());
         assertEquals(0, cs.getVerticalOffset());
         assertEquals(0, cs.getVerticalOffsetOfReferenceTile());
-        assertEquals(0, cs.getRequiredCapabilities());
+        assertEquals(1, cs.getRequiredCapabilities()); // TODO: make this "1" a constant somewhere
     }
 }

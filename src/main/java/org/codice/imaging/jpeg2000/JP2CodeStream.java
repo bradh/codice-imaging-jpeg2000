@@ -35,11 +35,11 @@ public class JP2CodeStream {
     private static final int SOT_MARKER_CODE = 0xFF90;
     private static final int COD_MARKER_CODE = 0xFF52;
     private static final int QCD_MARKER_CODE = 0xFF5C;
-    
+
     private JP2Reader mReader = null;
     private int mRemainingCodestreamLength = 0;
     private byte[] mCodestream = null;
-    
+
     private int mVerticalOffsetOfReferenceTile;
     private int mHorizontalOffsetOfReferenceTile;
     private int mHeightOfReferenceTile;
@@ -49,7 +49,7 @@ public class JP2CodeStream {
     private int mYSize;
     private int mXSize;
     private int mRequiredCapabilities;
-    
+
     public JP2CodeStream(JP2Reader reader, final int codestreamLength) throws JP2ParsingException {
         mReader = reader;
         mRemainingCodestreamLength = codestreamLength;
@@ -73,15 +73,11 @@ public class JP2CodeStream {
             mRemainingCodestreamLength -= 2;
             switch (markerCode) {
                 case COD_MARKER_CODE: {
-                    int markerLength = mReader.readUnsignedShort();
-                    mReader.skipBytes(markerLength - 2);
-                    mRemainingCodestreamLength -=  (markerLength - 2);
+                    parseCodingStyleDefault();
                     break;
                 }
                 case SOT_MARKER_CODE: {
-                    int markerLength = mReader.readUnsignedShort();
-                    mReader.skipBytes(markerLength - 2);
-                    mRemainingCodestreamLength -=  (markerLength - 2);
+                    parseStartOfTilePart();
                     break;
                 }
                 case SOD_MARKER_CODE: {
@@ -91,9 +87,7 @@ public class JP2CodeStream {
                     break;
                 }
                 case QCD_MARKER_CODE: {
-                    int markerLength = mReader.readUnsignedShort();
-                    mReader.skipBytes(markerLength - 2);
-                    mRemainingCodestreamLength -=  (markerLength - 2);
+                    parseQuantizationDefault();
                     break;
                 }
                 default: {
@@ -106,7 +100,6 @@ public class JP2CodeStream {
         }
     }
 
-    // TODO: these should mostly be member variables
     private void parseImageAndTileSize() throws JP2ParsingException {
         int markerCode = mReader.readUnsignedShort();
         if (markerCode != SIZ_MARKER_CODE) {
@@ -131,10 +124,48 @@ public class JP2CodeStream {
         }
     }
 
+    // TODO: make these values member variables
+    private void parseStartOfTilePart() throws JP2ParsingException {
+        int markerLength = mReader.readUnsignedShort();
+        if (markerLength != (2 * PackageConstants.UNSIGNED_SHORT_LENGTH + PackageConstants.UNSIGNED_INT_LENGTH + 2 * PackageConstants.UNSIGNED_BYTE_LENGTH)) {
+            throw new JP2ParsingException("Invalid length for SOT part:" + markerLength);
+        }
+        int isot = mReader.readUnsignedShort();
+        int psot = mReader.readUnsignedInt();
+        int tpsot = mReader.readUnsignedByte();
+        int tnsot = mReader.readUnsignedByte();
+        mRemainingCodestreamLength -= (markerLength - 2);
+    }
+
+    private void parseCodingStyleDefault() throws JP2ParsingException {
+        int markerLength = mReader.readUnsignedShort();
+        // TODO: these should be member variables
+        int scod = mReader.readUnsignedByte();
+        int progressionOrder = mReader.readUnsignedByte();
+        int numberOfLayers = mReader.readUnsignedShort();
+        int multipleComponentsTransformation = mReader.readUnsignedByte();
+        int numberOfDecompositionLevels = mReader.readUnsignedByte();
+        int codeBlockWidth = mReader.readUnsignedByte();
+        int codeBlockHeight = mReader.readUnsignedByte();
+        int codeBlockStyle = mReader.readUnsignedByte();
+        int transformation = mReader.readUnsignedByte();
+        // TODO: add precinct size parsing here.
+        mReader.skipBytes(markerLength - 12);
+        mRemainingCodestreamLength -= (markerLength - 2);
+    }
+
+    private void parseQuantizationDefault() throws JP2ParsingException {
+        int markerLength = mReader.readUnsignedShort();
+        int quantizationStyleForAllComponents = mReader.readUnsignedByte();
+        // TODO: read quantization step values here = see A6.4
+        mReader.skipBytes(markerLength - 3);
+        mRemainingCodestreamLength -= (markerLength - 2);
+    }
+
     public int getRequiredCapabilities() {
         return mRequiredCapabilities;
     }
-        
+
     public int getVerticalOffsetOfReferenceTile() {
         return mVerticalOffsetOfReferenceTile;
     }
