@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Codice
+ * Copyright 2015 Codice.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,16 @@
 package org.codice.imaging.jpeg2000;
 
 /**
- * A JPEG2000 Channel Definition Box, as defined in JPEG core specification
- * Annex I Section 5.3.6.
+ * A JPEG2000 XML Box, as defined in JPEG core specification
+ * Annex I Section 7.1.
  */
-public class JP2ChannelDefinitionBox {
-
+public class JP2XmlBox {
     private JP2Reader mReader = null;
     private int mBoxLength = 0;
-    private JP2ChannelDefinitionEntry[] mEntries = null;
-
+    private String mXml  = null;
+    
     /**
-     * Construct ChannelDefinitionBox from specified reader.
+     * Construct XML Box from specified reader.
      *
      * This will read a specified number of bytes (the boxLength) from the
      * reader, or will throw a parsing exception.
@@ -44,30 +43,19 @@ public class JP2ChannelDefinitionBox {
      *
      * @throws JP2ParsingException
      */
-    public JP2ChannelDefinitionBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
+    public JP2XmlBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
         mReader = reader;
         mBoxLength = boxLength;
         parseBox();
     }
-
+    
     private void parseBox() throws JP2ParsingException {
-        int numberOfChannelDescriptors = mReader.readUnsignedShort();
-        int remainingBytes = mBoxLength - PackageConstants.UNSIGNED_SHORT_LENGTH;
-        int expectedRemainingBytes = numberOfChannelDescriptors * JP2ChannelDefinitionEntry.numberOfBytesInOneEntry();
-        if (remainingBytes != expectedRemainingBytes) {
-            throw new JP2ParsingException("Unexpected box length for JP2ChannelDefinitionBox:" + remainingBytes + ", expected:" + expectedRemainingBytes);            
-        }
-        mEntries = new JP2ChannelDefinitionEntry[numberOfChannelDescriptors];
-        for (int i = 0; i < mEntries.length; ++i) {
-            mEntries[i] = new JP2ChannelDefinitionEntry(mReader);
-        }
+        mXml = mReader.getFixedLengthString(mBoxLength);
     }
 
-    public int getNumberOfEntries() {
-        return mEntries.length;
+    public String getXml() {
+        return mXml;
     }
-
-    public JP2ChannelDefinitionEntry getEntry(final int entryIndex) {
-        return mEntries[entryIndex];
-    }
+    
+    
 }

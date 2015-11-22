@@ -37,7 +37,7 @@ public class JP2ParseStrategy {
     private String mBrand = null;
     private int mMinorVersion = 0;
     private final ArrayList<String> mCompatibilityList = new ArrayList<>();
-    private final ArrayList<String> mXmlList = new ArrayList<>();
+    private final ArrayList<JP2XmlBox> mXmlList = new ArrayList<>();
     private int mImageHeight = 0;
     private int mImageWidth = 0;
     private int mNumberOfComponents = 0;
@@ -155,8 +155,7 @@ public class JP2ParseStrategy {
     }
 
     private void parseXMLBox(int xmlLength) throws JP2ParsingException {
-        String xml = mReader.getFixedLengthString(xmlLength);
-        mXmlList.add(xml);
+        mXmlList.add(new JP2XmlBox(mReader, xmlLength));
     }
 
     private void parseFileTypeBox() throws JP2ParsingException {
@@ -194,7 +193,7 @@ public class JP2ParseStrategy {
         return mCompatibilityList;
     }
 
-    public List<String> getXmlList() {
+    public List<JP2XmlBox> getXmlList() {
         return mXmlList;
     }
 

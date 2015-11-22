@@ -104,8 +104,8 @@ public class TestBasicJP2Parsing {
         assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
 
         assertEquals(2, parseStrategy.getXmlList().size());
-        assertEquals(xml1, parseStrategy.getXmlList().get(0));
-        assertEquals(xml2, parseStrategy.getXmlList().get(1));
+        assertEquals(xml1, parseStrategy.getXmlList().get(0).getXml());
+        assertEquals(xml2, parseStrategy.getXmlList().get(1).getXml());
 
         assertEquals(768, parseStrategy.getImageWidth());
         assertEquals(512, parseStrategy.getImageHeight());
