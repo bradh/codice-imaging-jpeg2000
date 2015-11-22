@@ -27,26 +27,12 @@ package org.codice.imaging.jpeg2000;
  * A JPEG2000 Channel Definition Box, as defined in JPEG core specification
  * Annex I Section 5.3.6.
  */
-public class JP2ChannelDefinitionBox {
+public class JP2ChannelDefinitionBox extends AbstractJP2Box {
 
-    private JP2Reader mReader = null;
-    private int mBoxLength = 0;
     private JP2ChannelDefinitionEntry[] mEntries = null;
 
-    /**
-     * Construct ChannelDefinitionBox from specified reader.
-     *
-     * This will read a specified number of bytes (the boxLength) from the
-     * reader, or will throw a parsing exception.
-     *
-     * @param reader the reader to read from
-     * @param boxLength the number of bytes in the box
-     *
-     * @throws JP2ParsingException
-     */
-    public JP2ChannelDefinitionBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
-        mReader = reader;
-        mBoxLength = boxLength;
+    public JP2ChannelDefinitionBox(JP2Reader reader, int boxLength) throws JP2ParsingException {
+        super(reader, boxLength);
         parseBox();
     }
 

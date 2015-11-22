@@ -98,10 +98,10 @@ public class TestBasicJP2Parsing {
         JP2ParseStrategy parseStrategy = new JP2ParseStrategy();
         JP2Reader reader = new JP2FileReader(testfile);
         JP2Parser.parse(reader, parseStrategy);
-        assertEquals("jp2 ", parseStrategy.getBranding());
-        assertEquals(0, parseStrategy.getMinorVersion());
-        assertEquals(1, parseStrategy.getCompatibilityList().size());
-        assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
+        assertEquals("jp2 ", parseStrategy.getFileTypeBox().getBranding());
+        assertEquals(0, parseStrategy.getFileTypeBox().getMinorVersion());
+        assertEquals(1, parseStrategy.getFileTypeBox().getCompatibilityList().size());
+        assertTrue(parseStrategy.getFileTypeBox().getCompatibilityList().contains("jp2 "));
 
         assertEquals(2, parseStrategy.getXmlList().size());
         assertEquals(xml1, parseStrategy.getXmlList().get(0).getXml());
@@ -132,10 +132,10 @@ public class TestBasicJP2Parsing {
         JP2ParseStrategy parseStrategy = new JP2ParseStrategy();
         JP2Reader reader = new JP2FileReader(testfile);
         JP2Parser.parse(reader, parseStrategy);
-        assertEquals("jp2 ", parseStrategy.getBranding());
-        assertEquals(0, parseStrategy.getMinorVersion());
-        assertEquals(1, parseStrategy.getCompatibilityList().size());
-        assertTrue(parseStrategy.getCompatibilityList().contains("jp2 "));
+        assertEquals("jp2 ", parseStrategy.getFileTypeBox().getBranding());
+        assertEquals(0, parseStrategy.getFileTypeBox().getMinorVersion());
+        assertEquals(1, parseStrategy.getFileTypeBox().getCompatibilityList().size());
+        assertTrue(parseStrategy.getFileTypeBox().getCompatibilityList().contains("jp2 "));
 
         assertNotNull(parseStrategy.getChannelDefinitionBox());
         assertEquals(3, parseStrategy.getChannelDefinitionBox().getNumberOfEntries());

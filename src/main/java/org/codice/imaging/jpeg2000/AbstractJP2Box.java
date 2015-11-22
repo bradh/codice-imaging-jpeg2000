@@ -24,14 +24,16 @@
 package org.codice.imaging.jpeg2000;
 
 /**
- * A JPEG2000 XML Box, as defined in JPEG core specification
- * Annex I Section 7.1.
+ *
+ * @author bradh
  */
-public class JP2XmlBox extends AbstractJP2Box {
-    private String mXml  = null;
+public abstract class AbstractJP2Box {
+    
+    protected JP2Reader mReader = null;
+    protected int mBoxLength = 0;
     
     /**
-     * Construct XML Box from specified reader.
+     * Construct box from specified reader.
      *
      * This will read a specified number of bytes (the boxLength) from the
      * reader, or will throw a parsing exception.
@@ -41,18 +43,8 @@ public class JP2XmlBox extends AbstractJP2Box {
      *
      * @throws JP2ParsingException
      */
-    public JP2XmlBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
-        super(reader, boxLength);
-        parseBox();
+    public AbstractJP2Box(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
+        mReader = reader;
+        mBoxLength = boxLength;
     }
-    
-    private void parseBox() throws JP2ParsingException {
-        mXml = mReader.getFixedLengthString(mBoxLength);
-    }
-
-    public String getXml() {
-        return mXml;
-    }
-    
-    
 }

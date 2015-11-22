@@ -30,4 +30,6 @@ class PackageConstants {
     static final int UNSIGNED_BYTE_LENGTH = 1;
     static final int UNSIGNED_SHORT_LENGTH = 2;
     static final int UNSIGNED_INT_LENGTH = 4;
+    
+    static final int BOX_SIGNATURE_LENGTH = 4;
 }

@@ -27,12 +27,10 @@ package org.codice.imaging.jpeg2000;
  * A JPEG2000 XML Box, as defined in JPEG core specification
  * Annex I Section 5.3.3.
  */
-public class JP2ColourSpecificationBox {
+public class JP2ColourSpecificationBox extends AbstractJP2Box {
     public static final int ENUM_COLOUR_SPACE_SRGB = 16;
     public static final int ENUM_COLOUR_SPACE_GREYSCALE = 17;
     
-    private JP2Reader mReader = null;
-    private int mBoxLength = 0;
     private int mColourSpace = -1;
 
 
@@ -47,12 +45,11 @@ public class JP2ColourSpecificationBox {
      *
      * @throws JP2ParsingException
      */
-    public JP2ColourSpecificationBox(final JP2Reader reader, final int boxLength) throws JP2ParsingException {
-        mReader = reader;
-        mBoxLength = boxLength;
+    public JP2ColourSpecificationBox(JP2Reader reader, int boxLength) throws JP2ParsingException {
+        super(reader, boxLength);
         parseBox();
     }
-    
+
     private void parseBox() throws JP2ParsingException {
         int method = mReader.readUnsignedByte();
         mReader.skipBytes(PackageConstants.UNSIGNED_BYTE_LENGTH); // PREC, always ignored
