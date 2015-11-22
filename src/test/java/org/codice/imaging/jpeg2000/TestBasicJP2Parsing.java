@@ -114,8 +114,8 @@ public class TestBasicJP2Parsing {
         assertFalse(parseStrategy.hasUnknownColourspace());
         assertFalse(parseStrategy.hasIntellectualPropertyRights());
 
-        // TODO: make the sRGB and greyscale enum values shared somewhere
-        assertEquals(16, parseStrategy.getColourSpace());
+        assertNotNull(parseStrategy.getColourSpecification());
+        assertEquals(JP2ColourSpecificationBox.ENUM_COLOUR_SPACE_SRGB, parseStrategy.getColourSpecification().getColourSpace());
 
         assertNull(parseStrategy.getChannelDefinitionBox());
 

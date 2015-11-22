@@ -43,7 +43,7 @@ public class JP2ParseStrategy {
     private int mNumberOfComponents = 0;
     private int mColourspaceUnknown  = 0;
     private int mIntellectualPropertyRights = 0;
-    private int mColourSpace = 0;
+    private JP2ColourSpecificationBox mColourSpecificationBox = null;
 
     private int mBitsPerComponent = 0;
     
@@ -101,7 +101,7 @@ public class JP2ParseStrategy {
                     parseImageHeaderBox(remainingBytesInBox);
                     break;
                 case "colr":
-                    parseColourSpecificationBox(remainingBytesInBox);
+                    mColourSpecificationBox = new JP2ColourSpecificationBox(mReader, remainingBytesInBox);
                     break;
                 case "cdef":
                     parseChannelDefinitionBox(remainingBytesInBox);
@@ -130,28 +130,11 @@ public class JP2ParseStrategy {
         mIntellectualPropertyRights = mReader.readUnsignedByte();
     }
 
-    private void parseColourSpecificationBox(final int remainingBytesInBox) throws JP2ParsingException {
-        int method = mReader.readUnsignedByte();
-        mReader.skipBytes(1); // PREC, always ignored
-        mReader.skipBytes(1); // APPROX, always ignored
-        if (method == 1) {
-            mColourSpace = mReader.readUnsignedInt();
-        } else if (method == 2) {
-            parseRestrictedICCProfileColourSpecificationBox(remainingBytesInBox - (3 * PackageConstants.UNSIGNED_BYTE_LENGTH));
-        } else {
-            mReader.skipBytes(remainingBytesInBox - (3 * PackageConstants.UNSIGNED_BYTE_LENGTH));
-        }
-    }
-
     private void parseChannelDefinitionBox(final int remainingBytesInBox) throws JP2ParsingException {
         if (mChannelDefinitionBox != null) {
             throw new JP2ParsingException("Duplicate Channel Definition Box entries.");
         }
         mChannelDefinitionBox = new JP2ChannelDefinitionBox(mReader, remainingBytesInBox);
-    }
-
-    private void parseRestrictedICCProfileColourSpecificationBox(final int bytesRemainingInBox) throws JP2ParsingException {
-        mReader.skipBytes(bytesRemainingInBox);
     }
 
     private void parseXMLBox(int xmlLength) throws JP2ParsingException {
@@ -180,7 +163,6 @@ public class JP2ParseStrategy {
         }
     }
 
-
     public String getBranding() {
         return mBrand;
     }
@@ -193,6 +175,11 @@ public class JP2ParseStrategy {
         return mCompatibilityList;
     }
 
+    /**
+     * Get the XML Boxes for this file.
+     *
+     * @return a list of XML boxes, possibly empty.
+     */
     public List<JP2XmlBox> getXmlList() {
         return mXmlList;
     }
@@ -232,8 +219,8 @@ public class JP2ParseStrategy {
         return (mIntellectualPropertyRights == 1);
     }
 
-    public int getColourSpace() {
-        return mColourSpace;
+    public JP2ColourSpecificationBox getColourSpecification() {
+        return mColourSpecificationBox;
     }
 
     public JP2CodeStream getCodeStream() {
