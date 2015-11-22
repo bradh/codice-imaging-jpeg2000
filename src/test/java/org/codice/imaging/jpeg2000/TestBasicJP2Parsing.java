@@ -149,5 +149,17 @@ public class TestBasicJP2Parsing {
         assertEquals(2, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelIndex());
         assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelType());
         assertEquals(1, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelAssociation());
+        
+        assertNotNull(parseStrategy.getCodeStream());
+        JP2CodeStream cs = parseStrategy.getCodeStream();
+        assertEquals(640, cs.getHeightOfReferenceTile());
+        assertEquals(480, cs.getWidthOfReferenceTile());
+        assertEquals(480, cs.getXSize());
+        assertEquals(640, cs.getYSize());
+        assertEquals(0, cs.getHorizontalOffset());
+        assertEquals(0, cs.getHorizontalOffsetOfReferenceTile());
+        assertEquals(0, cs.getVerticalOffset());
+        assertEquals(0, cs.getVerticalOffsetOfReferenceTile());
+        assertEquals(0, cs.getRequiredCapabilities());
     }
 }

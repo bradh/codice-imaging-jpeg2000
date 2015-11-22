@@ -29,17 +29,26 @@ package org.codice.imaging.jpeg2000;
  */
 public class JP2CodeStream {
 
-    private JP2Reader mReader = null;
-    private int mRemainingCodestreamLength = 0;
-    
-    private byte[] mCodestream = null;
-
     private static final int SIZ_MARKER_CODE = 0xFF51;
     private static final int SOC_MARKER_CODE = 0xFF4F;
     private static final int SOD_MARKER_CODE = 0xFF93;
     private static final int SOT_MARKER_CODE = 0xFF90;
     private static final int COD_MARKER_CODE = 0xFF52;
     private static final int QCD_MARKER_CODE = 0xFF5C;
+    
+    private JP2Reader mReader = null;
+    private int mRemainingCodestreamLength = 0;
+    private byte[] mCodestream = null;
+    
+    private int mVerticalOffsetOfReferenceTile;
+    private int mHorizontalOffsetOfReferenceTile;
+    private int mHeightOfReferenceTile;
+    private int mWidthOfReferenceTile;
+    private int mVerticalOffset;
+    private int mHorizontalOffset;
+    private int mYSize;
+    private int mXSize;
+    private int mRequiredCapabilities;
     
     public JP2CodeStream(JP2Reader reader, final int codestreamLength) throws JP2ParsingException {
         mReader = reader;
@@ -106,15 +115,15 @@ public class JP2CodeStream {
         mRemainingCodestreamLength -= 2;
         int lengthOfMarkerSegmentInBytes = mReader.readUnsignedShort();
         mRemainingCodestreamLength -= lengthOfMarkerSegmentInBytes;
-        int requiredCapabilities = mReader.readUnsignedShort();
-        int xSize = mReader.readUnsignedInt();
-        int ySize = mReader.readUnsignedInt();
-        int horizontalOffset = mReader.readUnsignedInt();
-        int verticalOffset = mReader.readUnsignedInt();
-        int widthOfReferenceTile = mReader.readUnsignedInt();
-        int heightOfReferenceTile = mReader.readUnsignedInt();
-        int horizontalOffsetOfReferenceTile = mReader.readUnsignedInt();
-        int verticalOffsetOfReferenceTile = mReader.readUnsignedInt();
+        mRequiredCapabilities = mReader.readUnsignedShort();
+        mXSize = mReader.readUnsignedInt();
+        mYSize = mReader.readUnsignedInt();
+        mHorizontalOffset = mReader.readUnsignedInt();
+        mVerticalOffset = mReader.readUnsignedInt();
+        mWidthOfReferenceTile = mReader.readUnsignedInt();
+        mHeightOfReferenceTile = mReader.readUnsignedInt();
+        mHorizontalOffsetOfReferenceTile = mReader.readUnsignedInt();
+        mVerticalOffsetOfReferenceTile = mReader.readUnsignedInt();
         int numberOfComponentsInImage = mReader.readUnsignedShort();
         // TODO: parse this properly
         for (int i = 0; i < numberOfComponentsInImage; ++i) {
@@ -122,4 +131,39 @@ public class JP2CodeStream {
         }
     }
 
+    public int getRequiredCapabilities() {
+        return mRequiredCapabilities;
+    }
+        
+    public int getVerticalOffsetOfReferenceTile() {
+        return mVerticalOffsetOfReferenceTile;
+    }
+
+    public int getHorizontalOffsetOfReferenceTile() {
+        return mHorizontalOffsetOfReferenceTile;
+    }
+
+    public int getHeightOfReferenceTile() {
+        return mHeightOfReferenceTile;
+    }
+
+    public int getWidthOfReferenceTile() {
+        return mWidthOfReferenceTile;
+    }
+
+    public int getVerticalOffset() {
+        return mVerticalOffset;
+    }
+
+    public int getHorizontalOffset() {
+        return mHorizontalOffset;
+    }
+
+    public int getYSize() {
+        return mYSize;
+    }
+
+    public int getXSize() {
+        return mXSize;
+    }
 }
