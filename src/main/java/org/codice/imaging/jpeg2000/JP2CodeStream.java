@@ -35,10 +35,10 @@ public class JP2CodeStream {
     private static final int SOT_MARKER_CODE = 0xFF90;
     private static final int COD_MARKER_CODE = 0xFF52;
     private static final int QCD_MARKER_CODE = 0xFF5C;
+    private static final int EOC_MARKER_CODE = 0xFFD9;
 
     private JP2Reader mReader = null;
     private int mRemainingCodestreamLength = 0;
-    private byte[] mCodestream = null;
 
     private int mVerticalOffsetOfReferenceTile;
     private int mHorizontalOffsetOfReferenceTile;
@@ -53,23 +53,23 @@ public class JP2CodeStream {
     public JP2CodeStream(JP2Reader reader, final int codestreamLength) throws JP2ParsingException {
         mReader = reader;
         mRemainingCodestreamLength = codestreamLength;
-        parseMainHeader();
-        mCodestream = mReader.getBytes(mRemainingCodestreamLength);
+        verifyMarkerCode(SOC_MARKER_CODE);
+        parseMainHeaderAndTiles();
+        verifyMarkerCode(EOC_MARKER_CODE);
     }
 
-    public byte[] getCodestreamBytes() {
-        return mCodestream;
-    }
-
-    private void parseMainHeader() throws JP2ParsingException {
-        int markerCode = mReader.readUnsignedShort();
-        if (markerCode != SOC_MARKER_CODE) {
-            throw new JP2ParsingException("Unexpected marker code, expected SOC_MARKER_CODE but got " + markerCode);
-        }
+    private void verifyMarkerCode(int expectedMarkerCode) throws JP2ParsingException {
+        int actualMarkerCode = mReader.readUnsignedShort();
         mRemainingCodestreamLength -= 2;
+        if (actualMarkerCode != expectedMarkerCode) {
+            throw new JP2ParsingException(String.format("Missing expected marker. Expected 0x%04x but got 0x%04x", expectedMarkerCode, actualMarkerCode));
+        }
+    }
+
+    private void parseMainHeaderAndTiles() throws JP2ParsingException {
         parseImageAndTileSize();
-        while (mRemainingCodestreamLength > 0) {
-            markerCode = mReader.readUnsignedShort();
+        while (mRemainingCodestreamLength > 2) {
+            int markerCode = mReader.readUnsignedShort();
             mRemainingCodestreamLength -= 2;
             switch (markerCode) {
                 case COD_MARKER_CODE: {
@@ -77,13 +77,8 @@ public class JP2CodeStream {
                     break;
                 }
                 case SOT_MARKER_CODE: {
-                    parseStartOfTilePart();
-                    break;
-                }
-                case SOD_MARKER_CODE: {
-                    // TODO: extract data
-                    mReader.skipBytes(mRemainingCodestreamLength);
-                    mRemainingCodestreamLength = 0;
+                    // TODO: add the Tile to some member list
+                    JP2Tile tile = parseTilePart();
                     break;
                 }
                 case QCD_MARKER_CODE: {
@@ -101,11 +96,7 @@ public class JP2CodeStream {
     }
 
     private void parseImageAndTileSize() throws JP2ParsingException {
-        int markerCode = mReader.readUnsignedShort();
-        if (markerCode != SIZ_MARKER_CODE) {
-            throw new JP2ParsingException("Unexpected marker code, expected SIZ_MARKER_CODE but got " + markerCode);
-        }
-        mRemainingCodestreamLength -= 2;
+        verifyMarkerCode(SIZ_MARKER_CODE);
         int lengthOfMarkerSegmentInBytes = mReader.readUnsignedShort();
         mRemainingCodestreamLength -= lengthOfMarkerSegmentInBytes;
         mRequiredCapabilities = mReader.readUnsignedShort();
@@ -124,17 +115,26 @@ public class JP2CodeStream {
         }
     }
 
-    // TODO: make these values member variables
-    private void parseStartOfTilePart() throws JP2ParsingException {
+    private JP2Tile parseTilePart() throws JP2ParsingException {
+        JP2Tile tile = new JP2Tile();
         int markerLength = mReader.readUnsignedShort();
         if (markerLength != (2 * PackageConstants.UNSIGNED_SHORT_LENGTH + PackageConstants.UNSIGNED_INT_LENGTH + 2 * PackageConstants.UNSIGNED_BYTE_LENGTH)) {
             throw new JP2ParsingException("Invalid length for SOT part:" + markerLength);
         }
-        int isot = mReader.readUnsignedShort();
+        tile.setTileIndex(mReader.readUnsignedShort());
         int psot = mReader.readUnsignedInt();
-        int tpsot = mReader.readUnsignedByte();
-        int tnsot = mReader.readUnsignedByte();
-        mRemainingCodestreamLength -= (markerLength - 2);
+        tile.setTilePartIndex(mReader.readUnsignedByte());
+        tile.setNumberofTileParts(mReader.readUnsignedByte());
+        mRemainingCodestreamLength -= markerLength;
+        int expectedStartOfDataMarker = mReader.readUnsignedShort();
+        mRemainingCodestreamLength -= 2;
+        if (expectedStartOfDataMarker != SOD_MARKER_CODE) {
+            throw new JP2ParsingException("Missing expected SOF marker");
+        }
+        int tileBitstreamLength = psot - (PackageConstants.UNSIGNED_SHORT_LENGTH + markerLength + PackageConstants.UNSIGNED_SHORT_LENGTH);
+        tile.setData(mReader.getBytes(tileBitstreamLength));
+        mRemainingCodestreamLength -= tileBitstreamLength;
+        return tile;
     }
 
     private void parseCodingStyleDefault() throws JP2ParsingException {
@@ -151,7 +151,7 @@ public class JP2CodeStream {
         int transformation = mReader.readUnsignedByte();
         // TODO: add precinct size parsing here.
         mReader.skipBytes(markerLength - 12);
-        mRemainingCodestreamLength -= (markerLength - 2);
+        mRemainingCodestreamLength -= markerLength;
     }
 
     private void parseQuantizationDefault() throws JP2ParsingException {
@@ -159,7 +159,7 @@ public class JP2CodeStream {
         int quantizationStyleForAllComponents = mReader.readUnsignedByte();
         // TODO: read quantization step values here = see A6.4
         mReader.skipBytes(markerLength - 3);
-        mRemainingCodestreamLength -= (markerLength - 2);
+        mRemainingCodestreamLength -= markerLength;
     }
 
     public int getRequiredCapabilities() {

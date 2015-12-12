@@ -24,42 +24,46 @@
 package org.codice.imaging.jpeg2000;
 
 /**
- * A JP2ChannelDefinitionEntry represents one entry in a Channel Definition Box.
  *
- * Its basically one (of the N) Channel index / Channel type / Channel
- * association, as described in I.5.3.6 of the core standard.
+ * @author bradh
  */
-public class JP2ChannelDefinitionEntry {
+public class JP2Tile {
 
-    static int numberOfBytesInOneEntry() {
-        return 3 * PackageConstants.UNSIGNED_SHORT_LENGTH;
+    private int mTileIndex = 0;
+    private short mTilePartIndex = 0;
+    private short mNumberOfTileParts = 0;
+    private byte[] mData = null;
+
+    public int getTileIndex() {
+        return mTileIndex;
     }
 
-    private final int mChannelIndex;
-    private final int mChannelType;
-    private final int mChannelAssociation;
-
-    /**
-     * Construct a single channel entry from the data provided by the reader
-     * @param reader the reader to read from
-     * @throws JP2ParsingException if parsing fails
-     */
-    public JP2ChannelDefinitionEntry(JP2Reader reader) throws JP2ParsingException {
-        mChannelIndex = reader.readUnsignedShort();
-        mChannelType = reader.readUnsignedShort();
-        mChannelAssociation = reader.readUnsignedShort();
+    public short getTilePartIndex() {
+        return mTilePartIndex;
     }
 
-    public int getChannelIndex() {
-        return mChannelIndex;
+    public short getNumberOfTileParts() {
+        return mNumberOfTileParts;
     }
 
-    public int getChannelType() {
-        return mChannelType;
+    public byte[] getData() {
+        return mData;
     }
 
-    public int getChannelAssociation() {
-        return mChannelAssociation;
+    void setTileIndex(int tileIndex) {
+        mTileIndex = tileIndex;
+    }
+
+    void setTilePartIndex(byte tilePartIndex) {
+        mTilePartIndex = tilePartIndex;
+    }
+
+    void setNumberofTileParts(byte numberOfTileParts) {
+        mNumberOfTileParts = numberOfTileParts;
+    }
+
+    void setData(byte[] bytes) {
+        mData = bytes;
     }
 
 }
