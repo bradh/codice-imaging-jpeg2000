@@ -23,6 +23,9 @@
  */
 package org.codice.imaging.jpeg2000;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author bradh
@@ -49,6 +52,10 @@ public class JP2CodeStream {
     private int mYSize;
     private int mXSize;
     private int mRequiredCapabilities;
+    private int mNumberOfComponentsInImage;
+
+    private final List<JP2Tile> mTiles = new ArrayList<>();
+    private List<Integer> mQuantizationExponents = new ArrayList<>();
 
     public JP2CodeStream(JP2Reader reader, final int codestreamLength) throws JP2ParsingException {
         mReader = reader;
@@ -77,8 +84,8 @@ public class JP2CodeStream {
                     break;
                 }
                 case SOT_MARKER_CODE: {
-                    // TODO: add the Tile to some member list
                     JP2Tile tile = parseTilePart();
+                    mTiles.add(tile);
                     break;
                 }
                 case QCD_MARKER_CODE: {
@@ -108,9 +115,9 @@ public class JP2CodeStream {
         mHeightOfReferenceTile = mReader.readUnsignedInt();
         mHorizontalOffsetOfReferenceTile = mReader.readUnsignedInt();
         mVerticalOffsetOfReferenceTile = mReader.readUnsignedInt();
-        int numberOfComponentsInImage = mReader.readUnsignedShort();
+        mNumberOfComponentsInImage = mReader.readUnsignedShort();
         // TODO: parse this properly
-        for (int i = 0; i < numberOfComponentsInImage; ++i) {
+        for (int i = 0; i < mNumberOfComponentsInImage; ++i) {
             mReader.skipBytes(3);
         }
     }
@@ -157,8 +164,18 @@ public class JP2CodeStream {
     private void parseQuantizationDefault() throws JP2ParsingException {
         int markerLength = mReader.readUnsignedShort();
         int quantizationStyleForAllComponents = mReader.readUnsignedByte();
-        // TODO: read quantization step values here = see A6.4
-        mReader.skipBytes(markerLength - 3);
+        if ((quantizationStyleForAllComponents & 0x1F) == 0) {
+            // No quantization
+            int numberOfQuantizationSteps = (markerLength - 3);
+            for (int i = 0; i < numberOfQuantizationSteps; ++i) {
+                int quantizationStepValue = mReader.readUnsignedByte() >> 3;
+                mQuantizationExponents.add(quantizationStepValue);
+            }
+        } else {
+            // TODO: Handle scalar derived and scalar expounded
+            byte[] bytes = mReader.getBytes(markerLength - 3);
+        }
+        int numberOfGuardBits = quantizationStyleForAllComponents >> 5;
         mRemainingCodestreamLength -= markerLength;
     }
 
@@ -197,4 +214,13 @@ public class JP2CodeStream {
     public int getXSize() {
         return mXSize;
     }
+
+    public List<JP2Tile> getTiles() {
+        return mTiles;
+    }
+
+    public int getNumberOfComponentsInImage() {
+        return mNumberOfComponentsInImage;
+    }
+
 }

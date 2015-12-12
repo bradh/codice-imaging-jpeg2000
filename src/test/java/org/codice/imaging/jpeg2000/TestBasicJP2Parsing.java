@@ -119,7 +119,15 @@ public class TestBasicJP2Parsing {
 
         assertNull(parseStrategy.getChannelDefinitionBox());
 
-        assertNotNull(parseStrategy.getCodeStream());
+        JP2CodeStream cs = parseStrategy.getCodeStream();
+        assertNotNull(cs);
+        assertEquals(1, cs.getTiles().size());
+        JP2Tile tile = cs.getTiles().get(0);
+        assertNotNull(tile);
+        assertEquals(1, tile.getNumberOfTileParts());
+        assertEquals(0, tile.getTileIndex());
+        assertEquals(0, tile.getTilePartIndex());
+        assertEquals(649299, tile.getData().length);
     }
 
     @Test
@@ -149,7 +157,7 @@ public class TestBasicJP2Parsing {
         assertEquals(2, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelIndex());
         assertEquals(0, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelType());
         assertEquals(1, parseStrategy.getChannelDefinitionBox().getEntry(2).getChannelAssociation());
-        
+
         assertNotNull(parseStrategy.getCodeStream());
         JP2CodeStream cs = parseStrategy.getCodeStream();
         assertEquals(640, cs.getHeightOfReferenceTile());
@@ -161,5 +169,12 @@ public class TestBasicJP2Parsing {
         assertEquals(0, cs.getVerticalOffset());
         assertEquals(0, cs.getVerticalOffsetOfReferenceTile());
         assertEquals(1, cs.getRequiredCapabilities()); // TODO: make this "1" a constant somewhere
+        assertEquals(1, cs.getTiles().size());
+        JP2Tile tile = cs.getTiles().get(0);
+        assertNotNull(tile);
+        assertEquals(1, tile.getNumberOfTileParts());
+        assertEquals(0, tile.getTileIndex());
+        assertEquals(0, tile.getTilePartIndex());
+        assertEquals(451785, tile.getData().length);
     }
 }
