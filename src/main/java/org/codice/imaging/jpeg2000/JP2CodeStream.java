@@ -54,6 +54,17 @@ public class JP2CodeStream {
     private int mRequiredCapabilities;
     private int mNumberOfComponentsInImage;
 
+    // These come from COD block
+    private int mCodingStyleForAllComponents = 0;
+    private int mProgressionOrder = 0;
+    private int mNumberOfLayers = 1;
+    private int mMultipleComponentsTransformation = 0;
+    private int mNumberOfDecompositionLevels = 0;
+    private int mCodeBlockWidth;
+    private int mCodeBlockHeight;
+    private int mCodeBlockStyle;
+    private int mTransformation;
+
     private final List<JP2Tile> mTiles = new ArrayList<>();
     private List<Integer> mQuantizationExponents = new ArrayList<>();
 
@@ -146,18 +157,19 @@ public class JP2CodeStream {
 
     private void parseCodingStyleDefault() throws JP2ParsingException {
         int markerLength = mReader.readUnsignedShort();
-        // TODO: these should be member variables
-        int scod = mReader.readUnsignedByte();
-        int progressionOrder = mReader.readUnsignedByte();
-        int numberOfLayers = mReader.readUnsignedShort();
-        int multipleComponentsTransformation = mReader.readUnsignedByte();
-        int numberOfDecompositionLevels = mReader.readUnsignedByte();
-        int codeBlockWidth = mReader.readUnsignedByte();
-        int codeBlockHeight = mReader.readUnsignedByte();
-        int codeBlockStyle = mReader.readUnsignedByte();
-        int transformation = mReader.readUnsignedByte();
-        // TODO: add precinct size parsing here.
-        mReader.skipBytes(markerLength - 12);
+        mCodingStyleForAllComponents = mReader.readUnsignedByte();
+        mProgressionOrder = mReader.readUnsignedByte();
+        mNumberOfLayers = mReader.readUnsignedShort();
+        mMultipleComponentsTransformation = mReader.readUnsignedByte();
+        mNumberOfDecompositionLevels = mReader.readUnsignedByte();
+        mCodeBlockWidth = mReader.readUnsignedByte();
+        mCodeBlockHeight = mReader.readUnsignedByte();
+        mCodeBlockStyle = mReader.readUnsignedByte();
+        mTransformation = mReader.readUnsignedByte();
+        if ((mCodingStyleForAllComponents & 0x01) == 0x01) {
+            // TODO: add precinct size parsing here.
+            throw new JP2ParsingException("Need to implement Precinct parsing - see Table A-21.");
+        }
         mRemainingCodestreamLength -= markerLength;
     }
 
